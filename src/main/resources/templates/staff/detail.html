@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Chi tiết nhân sự</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
         body { background-color: #f8f9fa; }
         .card-box {
@@ -29,6 +30,22 @@
             font-size: 13px;
             font-weight: bold;
         }
+        .status-leave {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .status-intern {
+            background-color: #cce5ff;
+            color: #004085;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
         .info-item i { margin-right: 8px; color: #6c757d; }
     </style>
 </head>
@@ -37,42 +54,52 @@
     <a href="/home/staff" class="text-decoration-none mb-3 d-block">&larr; Quay lại</a>
 
     <div class="card-box text-center">
-        <!-- Hiển thị avatar -->
-        <img th:if="${staff.avatar != null}"
-             th:src="@{'/uploads/avatar/' + ${staff.avatar}}"
-             alt="avatar"
-             class="avatar mb-3" />
-
-        <img th:unless="${staff.avatar != null}"
-             th:src="@{/img/default-avatar.png}"
-             alt="default avatar"
-             class="avatar mb-3" />
-
         <h5 th:text="${staff.fullName}">Tên nhân sự</h5>
         <p class="text-muted" th:text="${staff.position}">Vị trí</p>
-        <span th:text="${staff.status}" class="status-active">Hoạt động</span>
+        <span th:text="${staff.status}">Hoạt động</span>
     </div>
 
     <div class="card-box">
-        <h6>Thông tin liên hệ</h6>
-        <p class="info-item"><i class="bi bi-envelope"></i> <span th:text="${staff.email}">email</span></p>
-        <p class="info-item"><i class="bi bi-briefcase"></i> <span th:text="${staff.status}">Trạng thái</span></p>
-        <p class="info-item"><i class="bi bi-calendar"></i> Tham gia:
-            <span th:text="${#dates.format(staff.createdAt, 'dd/MM/yyyy')}">27/07/2025</span></p>
-        <p class="info-item"><i class="bi bi-clock"></i> Cập nhật:
-            <span th:text="${#dates.format(staff.updatedAt, 'dd/MM/yyyy HH:mm')}">27/07/2025 17:50</span></p>
+        <h6>Thông tin cá nhân</h6>
+        <div class="row">
+            <div class="col-md-6">
+                <p class="info-item"><strong>Email:</strong> <span th:text="${staff.email}">email</span></p>
+                <p class="info-item"><strong>Vị trí:</strong> <span th:text="${staff.position}">Vị trí</span></p>
+                <p class="info-item"><strong>Lương:</strong> <span th:text="${staff.salary}">Lương</span> VNĐ</p>
+            </div>
+            <div class="col-md-6">
+                <p class="info-item"><strong>Ngày bắt đầu:</strong> <span th:text="${staff.startDate}">Ngày bắt đầu</span></p>
+                <p class="info-item"><strong>Tham gia:</strong> <span th:text="${staff.createdAt}">27/07/2025</span></p>
+                <p class="info-item"><strong>Cập nhật:</strong> <span th:text="${staff.updatedAt}">27/07/2025 17:50</span></p>
+            </div>
+        </div>
     </div>
 
-    <div class="d-flex justify-content-between">
-        <a th:href="@{'/home/staff/edit/' + ${staff.id}}" class="btn btn-edit w-50 me-2">✏️ Chỉnh sửa</a>
-        <form th:action="@{'/home/staff/' + ${staff.id}}" method="post" class="w-50">
-            <button type="submit" class="btn btn-delete w-100"
-                    onclick="return confirm('Xác nhận xoá nhân sự này?')">🗑️ Xoá nhân sự</button>
-        </form>
+    <div class="card-box">
+        <h6>Quyền hạn</h6>
+        <div class="row">
+            <div class="col-md-6">
+                <p class="info-item"><strong>Xem dự án:</strong> <span th:text="${staff.canViewProject}">Có</span></p>
+                <p class="info-item"><strong>Xem nhân sự:</strong> <span th:text="${staff.canViewStaff}">Có</span></p>
+                <p class="info-item"><strong>Xem hợp đồng:</strong> <span th:text="${staff.canViewContract}">Có</span></p>
+            </div>
+            <div class="col-md-6">
+                <p class="info-item"><strong>Sửa dự án:</strong> <span th:text="${staff.canEditProject}">Có</span></p>
+                <p class="info-item"><strong>Sửa nhân sự:</strong> <span th:text="${staff.canEditStaff}">Có</span></p>
+                <p class="info-item"><strong>Sửa hợp đồng:</strong> <span th:text="${staff.canEditContract}">Có</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between mt-4">
+        <a th:href="@{'/home/staff/edit/' + ${staff.id}}" class="btn btn-edit w-50 me-2">
+            Chỉnh sửa
+        </a>
+        <a th:href="@{'/home/staff/delete/' + ${staff.id}}" class="btn btn-delete w-50"
+           onclick="return confirm('Bạn có chắc chắn muốn xoá nhân sự này?')">
+            Xoá nhân sự
+        </a>
     </div>
 </div>
-
-<!-- Bootstrap icons CDN -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </body>
 </html>

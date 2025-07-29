@@ -35,6 +35,7 @@
                     <label class="form-label">Email *</label>
                     <input type="email" class="form-control" th:field="*{email}" required>
                 </div>
+
                 <div class="mb-3">
                     <label class="form-label">Chức vụ</label>
                     <select class="form-select" th:field="*{position}">
@@ -57,8 +58,19 @@
                         <button type="button" class="btn btn-outline-secondary" onclick="setPosition('Data Scientist')">Data Scientist</button>
                         <button type="button" class="btn btn-outline-secondary" onclick="setPosition('Product Manager')">Product Manager</button>
                     </div>
-                    <input type="text" class="form-control mt-2" th:field="*{department}" id="positionInput" placeholder="Nhập vị trí nếu không có trong danh sách">
+                    <input type="text" class="form-control mt-2" th:field="*{position}" id="positionInput" placeholder="Nhập vị trí nếu không có trong danh sách">
                 </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Lương *</label>
+                    <input type="number" class="form-control" th:field="*{salary}" required min="0">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Ngày bắt đầu làm việc</label>
+                    <input type="date" class="form-control" th:field="*{startDate}">
+                </div>
+
                 <div class="mb-3">
                     <label class="form-label">Trạng thái</label>
                     <select class="form-select" th:field="*{status}">
@@ -70,20 +82,48 @@
                 </div>
 
                 <div class="form-title">Quyền truy cập</div>
-                <div class="form-check form-switch mb-2">
-                    <input class="form-check-input" type="checkbox" th:field="*{canViewProject}">
-                    <label class="form-check-label">Xem dự án</label>
-                </div>
-                <div class="form-check form-switch mb-2">
-                    <input class="form-check-input" type="checkbox" th:field="*{canEditProject}">
-                    <label class="form-check-label">Chỉnh sửa dự án</label>
-                </div>
-                <div class="form-check form-switch mb-4">
-                    <input class="form-check-input" type="checkbox" th:field="*{canManageStaff}">
-                    <label class="form-check-label">Quản lý nhân sự</label>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary">Quyền dự án</h6>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" th:field="*{canViewProject}">
+                            <label class="form-check-label">Xem dự án</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" th:field="*{canEditProject}">
+                            <label class="form-check-label">Chỉnh sửa dự án</label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h6 class="text-success">Quyền hợp đồng</h6>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" th:field="*{canViewContract}">
+                            <label class="form-check-label">Xem hợp đồng</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" th:field="*{canEditContract}">
+                            <label class="form-check-label">Chỉnh sửa hợp đồng</label>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="d-flex justify-content-end">
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <h6 class="text-warning">Quyền nhân sự</h6>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" th:field="*{canViewStaff}">
+                            <label class="form-check-label">Xem nhân sự</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" th:field="*{canEditStaff}">
+                            <label class="form-check-label">Chỉnh sửa nhân sự</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
                     <button type="submit" class="btn btn-primary me-2">Lưu</button>
                     <a th:href="@{/home/staff}" class="btn btn-secondary">Quay lại</a>
                 </div>
@@ -118,8 +158,7 @@
         };
         reader.readAsDataURL(event.target.files[0]);
     }
-</script>
-<script>
+
     function setPosition(value) {
         document.getElementById('positionInput').value = value;
     }

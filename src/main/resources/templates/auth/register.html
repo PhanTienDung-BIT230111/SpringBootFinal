@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Đăng ký tài khoản</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         body {
             background-color: #fff;
@@ -51,13 +52,10 @@
             <label for="password" class="form-label">Mật khẩu</label>
             <input type="password" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" required>
         </div>
-        <div class="mb-4">
-            <label for="role" class="form-label">Chức vị</label>
-            <select class="form-select" id="role" name="role" required>
-                <option value="" selected disabled>Chọn chức vị</option>
-                <option value="USER">Người dùng</option>
-                <option value="ADMIN">Quản trị viên</option>
-            </select>
+        <input type="hidden" name="role" value="ADMIN">
+        <div class="alert alert-info mb-4">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Lưu ý:</strong> Tài khoản đăng ký sẽ mặc định có quyền Quản trị viên (ADMIN)
         </div>
         <div class="d-grid mb-3">
             <button type="submit" class="btn btn-dark-custom">Đăng ký</button>

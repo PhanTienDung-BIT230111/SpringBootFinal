@@ -13,13 +13,9 @@ public class Staff {
     private String avatar;
     private String fullName;
     private String email;
-    private String phone;
-    private String birthDate;
     private String position;
-    private String department;
     private int salary;
     private String startDate;
-    private String contractType;
     private String status; // Hoạt động, Nghỉ phép, Thực tập
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
@@ -31,24 +27,31 @@ public class Staff {
     @Column(name = "can_view_project")
     private Boolean canViewProject;
 
-    @Column(name = "can_manage_staff")
-    private Boolean canManageStaff;
+    @Column(name = "can_view_contract")
+    private Boolean canViewContract;
+
+    @Column(name = "can_edit_contract")
+    private Boolean canEditContract;
+
+    @Column(name = "can_view_staff")
+    private Boolean canViewStaff;
+
+    @Column(name = "can_edit_staff")
+    private Boolean canEditStaff;
+
+    @Column(name = "admin_id")
+    private Long adminId;
+
     public Staff() {
     }
 
-    public Staff(Long id, String fullName, String email, String phone, String birthDate,
-                 String position, String department, int salary, String startDate,
-                 String contractType, String status) {
+    public Staff(Long id, String fullName, String email, String position, int salary, String startDate, String status) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
-        this.phone = phone;
-        this.birthDate = birthDate;
         this.position = position;
-        this.department = department;
         this.salary = salary;
         this.startDate = startDate;
-        this.contractType = contractType;
         this.status = status;
     }
 
@@ -78,36 +81,12 @@ public class Staff {
         this.email = email;
     }
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(String birthDate) {
-        this.birthDate = birthDate;
-    }
-
     public String getPosition() {
         return position;
     }
 
     public void setPosition(String position) {
         this.position = position;
-    }
-
-    public String getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
     }
 
     public int getSalary() {
@@ -126,14 +105,6 @@ public class Staff {
         this.startDate = startDate;
     }
 
-    public String getContractType() {
-        return contractType;
-    }
-
-    public void setContractType(String contractType) {
-        this.contractType = contractType;
-    }
-
     public String getStatus() {
         return status;
     }
@@ -141,8 +112,9 @@ public class Staff {
     public void setStatus(String status) {
         this.status = status;
     }
+
     public boolean isCanViewProject() {
-        return Boolean.TRUE.equals(canViewProject); // không lỗi nếu null
+        return Boolean.TRUE.equals(canViewProject);
     }
 
     public void setCanViewProject(boolean canViewProject) {
@@ -157,13 +129,46 @@ public class Staff {
         this.canEditProject = canEditProject;
     }
 
-    public boolean isCanManageStaff() {
-        return Boolean.TRUE.equals(canManageStaff);
+    public boolean isCanViewContract() {
+        return Boolean.TRUE.equals(canViewContract);
     }
 
-    public void setCanManageStaff(boolean canManageStaff) {
-        this.canManageStaff = canManageStaff;
+    public void setCanViewContract(boolean canViewContract) {
+        this.canViewContract = canViewContract;
     }
+
+    public boolean isCanEditContract() {
+        return Boolean.TRUE.equals(canEditContract);
+    }
+
+    public void setCanEditContract(boolean canEditContract) {
+        this.canEditContract = canEditContract;
+    }
+
+    public boolean isCanViewStaff() {
+        return Boolean.TRUE.equals(canViewStaff);
+    }
+
+    public void setCanViewStaff(boolean canViewStaff) {
+        this.canViewStaff = canViewStaff;
+    }
+
+    public boolean isCanEditStaff() {
+        return Boolean.TRUE.equals(canEditStaff);
+    }
+
+    public void setCanEditStaff(boolean canEditStaff) {
+        this.canEditStaff = canEditStaff;
+    }
+
+    public Long getAdminId() {
+        return adminId;
+    }
+
+    public void setAdminId(Long adminId) {
+        this.adminId = adminId;
+    }
+
     public String getAvatar() {
         return avatar;
     }
@@ -171,6 +176,7 @@ public class Staff {
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -178,6 +184,7 @@ public class Staff {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }

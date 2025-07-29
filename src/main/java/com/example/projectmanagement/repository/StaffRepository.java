@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 public interface StaffRepository extends JpaRepository<Staff, Long> {
     long countByStatus(String status);
-        List<Staff> findByPosition(String position);
+    List<Staff> findByPosition(String position);
     List<Staff> findByFullNameContainingIgnoreCase(String keyword);
+    List<Staff> findByAdminId(Long adminId);
 }

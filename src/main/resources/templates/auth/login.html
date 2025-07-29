@@ -32,6 +32,7 @@
         }
 
         .btn-dark-custom {
+            color:#fff;
             background-color: #000013;
             border-color: #000013;
         }
@@ -57,8 +58,8 @@
 
     <form method="post" th:action="@{/login}">
         <div class="mb-3">
-            <label for="username" class="form-label">Email</label>
-            <input type="text" class="form-control" id="username" name="username" placeholder="Nhập email của bạn" required>
+            <label for="username" class="form-label">Tên đăng nhập</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Nhập tên đăng nhập" required>
         </div>
         <div class="mb-3">
             <label for="password" class="form-label">Mật khẩu</label>

@@ -36,12 +36,12 @@ public class AuthController {
     public String login(@ModelAttribute("user") User user,
                         HttpSession session,
                         Model model) {
-        User loggedIn = userService.login(user.getEmail(), user.getPassword());
+        User loggedIn = userService.login(user.getTenDangNhap(), user.getMatKhau());
         if (loggedIn != null) {
             session.setAttribute("loggedInUser", loggedIn);
             return "redirect:/home";
         } else {
-            model.addAttribute("error", "Sai email hoặc mật khẩu");
+            model.addAttribute("error", "Sai tên đăng nhập hoặc mật khẩu");
             return "auth/login";
         }
     }
