@@ -4,8 +4,56 @@
     <meta charset="UTF-8">
     <title th:text="${staff != null and staff.id != null} ? 'Chỉnh sửa Nhân sự' : 'Thêm Nhân sự'">Thêm Nhân sự</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        body { background-color: #f8f9fa; }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background-color: #f8f9fa;
+            transition: 0.3s;
+            padding-top: 20px;
+            z-index: 1000;
+        }
+        
+        .sidebar.hidden {
+            left: -250px;
+        }
+        
+        .sidebar a {
+            display: block;
+            padding: 10px 25px;
+            color: #000;
+            text-decoration: none;
+        }
+        
+        .sidebar a:hover {
+            background-color: #e9ecef;
+        }
+        
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: margin-left 0.3s;
+        }
+        
+        .content.full-width {
+            margin-left: 0;
+        }
+        
+        .toggle-btn {
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
         .form-control, .form-select { border-radius: 8px; }
         .form-title { font-weight: bold; margin-top: 20px; margin-bottom: 10px; }
         .avatar-upload img {
@@ -17,8 +65,25 @@
     </style>
 </head>
 <body>
-<div class="container py-4">
-    <h3 class="mb-4" th:text="${staff != null and staff.id != null} ? 'Chỉnh sửa Nhân sự' : 'Thêm Nhân sự mới'">Thêm Nhân sự mới</h3>
+
+<div class="sidebar" id="sidebar">
+    <h5 class="text-center mb-3">Menu</h5>
+    <a href="/home"><i class="fas fa-home"></i> Trang chủ</a>
+    <a href="/home/projects"><i class="fas fa-briefcase"></i> Dự án</a>
+    <a href="/home/staff"><i class="fas fa-users"></i> Nhân sự</a>
+    <a href="/home/contracts"><i class="fas fa-file-contract"></i> Hợp đồng</a>
+    <a href="/home/reports"><i class="fas fa-chart-line"></i> Báo cáo</a>
+    <a href="/logout" class="text-danger"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+</div>
+
+<div class="content" id="mainContent">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <i class="fas fa-bars toggle-btn" onclick="toggleSidebar()"></i>
+            <strong class="ms-2" th:text="${staff != null and staff.id != null} ? 'Chỉnh sửa Nhân sự' : 'Thêm Nhân sự mới'">Thêm Nhân sự</strong><br>
+            <small>Điền thông tin nhân sự bên dưới</small>
+        </div>
+    </div>
 
     <form th:action="@{/home/staff/save}" th:object="${staff}" method="post" enctype="multipart/form-data">
         <input type="hidden" th:field="*{id}" />
@@ -108,7 +173,7 @@
                         </div>
                     </div>
                 </div>
-
+                
                 <div class="row mt-3">
                     <div class="col-md-6">
                         <h6 class="text-warning">Quyền nhân sự</h6>
@@ -122,46 +187,56 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="d-flex justify-content-end mt-4">
-                    <button type="submit" class="btn btn-primary me-2">Lưu</button>
-                    <a th:href="@{/home/staff}" class="btn btn-secondary">Quay lại</a>
-                </div>
             </div>
 
-            <!-- Avatar bên phải -->
-            <div class="col-md-3 text-center">
-                <div class="avatar-upload">
-                    <img id="avatarPreview"
-                         src="/img/default-avatar.png"
-                         alt="avatar">
-                    <div>
-                        <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="toggleFileInput()">Chọn ảnh đại diện</button>
-                        <input type="file" id="avatarFile" name="avatarFile" class="form-control mt-2 d-none" accept="image/*" onchange="previewImage(event)">
+            <!-- Upload avatar bên phải -->
+            <div class="col-md-3">
+                <div class="avatar-upload text-center">
+                    <img th:src="${staff != null and staff.avatar != null} ? ${staff.avatar} : '/img/default-avatar.png'" 
+                         alt="Avatar" class="mb-3" id="avatarPreview">
+                    <div class="mb-3">
+                        <input type="file" class="form-control" name="avatarFile" accept="image/*" onchange="previewImage(this)">
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a th:href="@{/home/staff}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i>
+                <span th:text="${staff != null and staff.id != null} ? 'Cập nhật' : 'Lưu'">Lưu</span>
+            </button>
         </div>
     </form>
 </div>
 
 <script>
-    function toggleFileInput() {
-        const input = document.getElementById('avatarFile');
-        input.classList.toggle('d-none');
+    function setPosition(position) {
+        document.getElementById('positionInput').value = position;
     }
-
-    function previewImage(event) {
-        const reader = new FileReader();
-        reader.onload = function () {
-            document.getElementById('avatarPreview').src = reader.result;
-        };
-        reader.readAsDataURL(event.target.files[0]);
+    
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('avatarPreview').src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
     }
-
-    function setPosition(value) {
-        document.getElementById('positionInput').value = value;
+    
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('mainContent');
+        if (sidebar && content) {
+            sidebar.classList.toggle('hidden');
+            content.classList.toggle('full-width');
+        }
     }
 </script>
+
 </body>
 </html>

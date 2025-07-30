@@ -1,8 +1,12 @@
 package com.example.projectmanagement.controller;
 
 import com.example.projectmanagement.entity.Project;
+import com.example.projectmanagement.entity.User;
 import com.example.projectmanagement.repository.ProjectRepository;
+import com.example.projectmanagement.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,14 +19,31 @@ import java.util.List;
 @RequestMapping("/home/projects")
 public class ProjectController {
     private final ProjectRepository projectRepo;
+    private final UserService userService;
 
-    public ProjectController(ProjectRepository projectRepo) {
+    public ProjectController(ProjectRepository projectRepo, UserService userService) {
         this.projectRepo = projectRepo;
+        this.userService = userService;
     }
 
     @GetMapping
     public String listProjects(Model model) {
-        List<Project> projects = projectRepo.findAll();
+        // Lấy user đăng nhập hiện tại
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loggedInUser = null;
+        if (authentication != null && authentication.isAuthenticated() &&
+            !"anonymousUser".equals(authentication.getName())) {
+            loggedInUser = userService.getUserByTenDangNhap(authentication.getName());
+        }
+
+        List<Project> projects;
+        if (loggedInUser != null) {
+            // Chỉ hiển thị dự án của admin đang đăng nhập
+            projects = projectRepo.findByAdminId(loggedInUser.getId());
+        } else {
+            // Nếu chưa đăng nhập thì redirect về login
+            return "redirect:/login";
+        }
 
         long activeCount = projects.stream()
                 .filter(p -> p.getStatus() != null && p.getStatus().trim().equalsIgnoreCase("Đang thực hiện"))
@@ -31,10 +52,10 @@ public class ProjectController {
         model.addAttribute("projects", projects);
         model.addAttribute("status", null);
         model.addAttribute("activeCount", activeCount);
+        model.addAttribute("loggedInUser", loggedInUser);
 
         return "projects/list";
     }
-
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
@@ -50,15 +71,50 @@ public class ProjectController {
             return "projects/form";
         }
 
+        // Tự động set adminId nếu chưa có
+        if (project.getAdminId() == null) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated() &&
+                !"anonymousUser".equals(authentication.getName())) {
+                User loggedInUser = userService.getUserByTenDangNhap(authentication.getName());
+                if (loggedInUser != null) {
+                    project.setAdminId(loggedInUser.getId());
+                    System.out.println("=== DEBUG PROJECT CONTROLLER ===");
+                    System.out.println("User ID: " + loggedInUser.getId());
+                    System.out.println("Project adminId set to: " + project.getAdminId());
+                    System.out.println("=== END DEBUG ===");
+                }
+            }
+        }
+
         projectRepo.save(project);
         return "redirect:/home/projects";
     }
 
     @GetMapping("/filter")
     public String filterProjects(@RequestParam String status, Model model) {
-        List<Project> filteredProjects = projectRepo.findByStatus(status);
+        // Lấy user đăng nhập hiện tại
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loggedInUser = null;
+        if (authentication != null && authentication.isAuthenticated() &&
+            !"anonymousUser".equals(authentication.getName())) {
+            loggedInUser = userService.getUserByTenDangNhap(authentication.getName());
+        }
+
+        List<Project> filteredProjects;
+        if (loggedInUser != null) {
+            // Lọc theo status và adminId
+            List<Project> allProjects = projectRepo.findByAdminId(loggedInUser.getId());
+            filteredProjects = allProjects.stream()
+                    .filter(p -> status.equals(p.getStatus()))
+                    .toList();
+        } else {
+            filteredProjects = List.of();
+        }
+
         model.addAttribute("projects", filteredProjects);
         model.addAttribute("status", status);
+        model.addAttribute("loggedInUser", loggedInUser);
         return "projects/list";
     }
 

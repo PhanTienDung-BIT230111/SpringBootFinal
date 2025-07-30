@@ -68,7 +68,7 @@ public class StaffController {
         
         if (loggedInUser != null) {
             // Tất cả user (ADMIN và USER) chỉ xem được nhân viên có cùng adminId
-            staffList = staffService.findByAdminId(loggedInUser.getId());
+                staffList = staffService.findByAdminId(loggedInUser.getId());
             System.out.println("Found " + staffList.size() + " staff for admin ID: " + loggedInUser.getId());
             staffList.forEach(s -> System.out.println("Staff: " + s.getFullName() + " (admin_id: " + s.getAdminId() + ")"));
         } else {
@@ -211,16 +211,16 @@ public class StaffController {
         System.out.println("=== DEBUG STAFF DETAIL METHOD CALLED ===");
         System.out.println("Staff ID requested: " + id);
         try {
-            Staff staff = staffService.findById(id);
+        Staff staff = staffService.findById(id);
             System.out.println("Staff found: " + (staff != null ? staff.getFullName() : "null"));
             if (staff != null) {
                 System.out.println("Staff adminId: " + staff.getAdminId());
                 System.out.println("Staff status: " + staff.getStatus());
                 System.out.println("Staff canViewProject: " + staff.isCanViewProject());
             }
-            model.addAttribute("staff", staff);
+        model.addAttribute("staff", staff);
             System.out.println("=== END DEBUG STAFF DETAIL ===");
-            return "staff/detail";
+        return "staff/detail";
         } catch (Exception e) {
             System.out.println("=== DEBUG STAFF DETAIL ERROR ===");
             System.out.println("Error: " + e.getMessage());
@@ -243,12 +243,12 @@ public class StaffController {
         
         if (loggedInUser != null) {
             // Tất cả user (ADMIN và USER) chỉ xem được nhân viên có cùng adminId
-            List<Staff> userStaffList = staffService.findByAdminId(loggedInUser.getId());
-            filteredList = userStaffList.stream()
-                    .filter(s -> s.getPosition() != null && 
-                               (position.equals(s.getPosition()) || 
-                                s.getPosition().contains(position)))
-                    .toList();
+                List<Staff> userStaffList = staffService.findByAdminId(loggedInUser.getId());
+                filteredList = userStaffList.stream()
+                        .filter(s -> s.getPosition() != null && 
+                                   (position.equals(s.getPosition()) || 
+                                    s.getPosition().contains(position)))
+                        .toList();
         } else {
             // Nếu chưa đăng nhập thì redirect về login
             return "redirect:/login";
@@ -281,10 +281,10 @@ public class StaffController {
         
         if (loggedInUser != null) {
             // Tất cả user (ADMIN và USER) chỉ tìm kiếm trong nhân viên có cùng adminId
-            List<Staff> userStaffList = staffService.findByAdminId(loggedInUser.getId());
-            staffList = userStaffList.stream()
-                    .filter(s -> s.getFullName().toLowerCase().contains(keyword.toLowerCase()))
-                    .toList();
+                List<Staff> userStaffList = staffService.findByAdminId(loggedInUser.getId());
+                staffList = userStaffList.stream()
+                        .filter(s -> s.getFullName().toLowerCase().contains(keyword.toLowerCase()))
+                        .toList();
         } else {
             // Nếu chưa đăng nhập thì redirect về login
             return "redirect:/login";

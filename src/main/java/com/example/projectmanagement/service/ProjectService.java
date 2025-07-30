@@ -22,4 +22,9 @@ public class ProjectService {
     public List<Project> findRecentProjects(int limit) {
         return projectRepository.findTopNByOrderBySignedDateDesc(limit); // sẽ viết hàm custom ở dưới
     }
+    
+    // ✅ Tìm dự án theo adminId
+    public List<Project> findByAdminId(Long adminId) {
+        return projectRepository.findByAdminId(adminId);
+    }
 }

@@ -14,7 +14,7 @@
             width: 250px;
             height: 100vh;
             position: fixed;
-            left: -250px;
+            left: 0;
             top: 0;
             background-color: #f8f9fa;
             transition: 0.3s;
@@ -22,8 +22,8 @@
             z-index: 1000;
         }
 
-        .sidebar.active {
-            left: 0;
+        .sidebar.hidden {
+            left: -250px;
         }
 
         .sidebar a {
@@ -38,13 +38,13 @@
         }
 
         .content {
-            margin-left: 0;
+            margin-left: 250px;
             padding: 20px;
             transition: margin-left 0.3s;
         }
 
-        .content.shift {
-            margin-left: 250px;
+        .content.full-width {
+            margin-left: 0;
         }
 
         .card-box {
@@ -76,7 +76,6 @@
     <h5 class="text-center mb-3">Menu</h5>
     <a href="/home"><i class="fas fa-home"></i> Trang chủ</a>
     <a href="/home/projects"><i class="fas fa-briefcase"></i> Dự án</a>
-    <a href="/home/projects/new"><i class="fas fa-plus-circle"></i> Tạo dự án</a>
     <a href="/home/staff"><i class="fas fa-users"></i> Nhân sự</a>
     <a href="/home/contracts"><i class="fas fa-file-contract"></i> Hợp đồng</a>
     <a href="/home/reports"><i class="fas fa-chart-line"></i> Báo cáo</a>
@@ -141,8 +140,8 @@
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
         const content = document.getElementById('mainContent');
-        sidebar.classList.toggle('active');
-        content.classList.toggle('shift');
+        sidebar.classList.toggle('hidden');
+        content.classList.toggle('full-width');
     }
 </script>
 

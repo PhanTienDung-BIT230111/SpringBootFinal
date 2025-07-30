@@ -1,6 +1,8 @@
 package com.example.projectmanagement.controller;
 
 import com.example.projectmanagement.service.ProjectService;
+import com.example.projectmanagement.service.ContractService;
+import com.example.projectmanagement.service.StaffService;
 import com.example.projectmanagement.entity.Project;
 import com.example.projectmanagement.entity.User;
 import com.example.projectmanagement.service.UserService;
@@ -21,6 +23,12 @@ public class HomeController {
     private ProjectService projectService;
     
     @Autowired
+    private ContractService contractService;
+    
+    @Autowired
+    private StaffService staffService;
+    
+    @Autowired
     private UserService userService;
 
     @GetMapping("/home")
@@ -39,9 +47,25 @@ public class HomeController {
         System.out.println("User Role: " + (loggedInUser != null ? loggedInUser.getVaiTro() : "null"));
         System.out.println("=== END DEBUG HOME ===");
         
-        model.addAttribute("runningCount", projectService.countByStatus("Đang thực hiện"));
-        model.addAttribute("contractPending", 0);
-        model.addAttribute("staffCount", 0);
+        // Thống kê theo adminId nếu user đã đăng nhập
+        if (loggedInUser != null) {
+            long runningCount = projectService.findByAdminId(loggedInUser.getId()).stream()
+                    .filter(p -> "Đang thực hiện".equals(p.getStatus()))
+                    .count();
+            long contractPending = contractService.findByAdminId(loggedInUser.getId()).stream()
+                    .filter(c -> "Chờ duyệt".equals(c.getStatus()))
+                    .count();
+            long staffCount = staffService.findByAdminId(loggedInUser.getId()).size();
+            
+            model.addAttribute("runningCount", runningCount);
+            model.addAttribute("contractPending", contractPending);
+            model.addAttribute("staffCount", staffCount);
+        } else {
+            model.addAttribute("runningCount", 0);
+            model.addAttribute("contractPending", 0);
+            model.addAttribute("staffCount", 0);
+        }
+        
         model.addAttribute("totalRevenue", "2.5B VND");
 
         List<Project> recentProjects = projectService.findRecentProjects(5);

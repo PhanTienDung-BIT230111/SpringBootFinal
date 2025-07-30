@@ -19,6 +19,9 @@ public class Project {
     private Double cost;;
     private Integer duration;
     private LocalDate signedDate;
+    private Long adminId; // Thêm thuộc tính adminId
+    private Integer progress; // Thêm thuộc tính progress (0-100)
+    
     public Project() {
     }
     public Project(String name, String description, LocalDate startDate, LocalDate endDate) {
@@ -90,6 +93,20 @@ public class Project {
     }
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public Long getAdminId() {
+        return adminId;
+    }
+    public void setAdminId(Long adminId) {
+        this.adminId = adminId;
+    }
+    
+    public Integer getProgress() {
+        return progress;
+    }
+    public void setProgress(Integer progress) {
+        this.progress = progress;
     }
 
     // Getters & Setters

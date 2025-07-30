@@ -10,6 +10,7 @@ import java.util.List;
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findByStatus(String status);
     List<Project> findBySignedDate(LocalDate signedDate);
+    List<Project> findByAdminId(Long adminId); // Thêm method lọc theo adminId
     long countByStatus(String status);
     long countByStatusIn(List<String> statuses);
     List<Project> findByStatusContainingIgnoreCase(String keyword);
