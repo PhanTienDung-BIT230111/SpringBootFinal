@@ -75,4 +75,13 @@ public class ContractServiceImpl implements ContractService {
     public List<Contract> searchByKeyword(String keyword) {
         return contractRepository.findByStatusContainingIgnoreCase(keyword);
     }
+    
+    @Override
+    public Double calculateTotalRevenueByAdminId(Long adminId) {
+        List<Contract> contracts = contractRepository.findByAdminId(adminId);
+        return contracts.stream()
+                .filter(contract -> contract.getValue() != null)
+                .mapToDouble(Contract::getValue)
+                .sum();
+    }
 } 

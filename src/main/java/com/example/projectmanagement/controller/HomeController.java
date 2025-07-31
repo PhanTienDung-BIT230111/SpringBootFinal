@@ -66,9 +66,39 @@ public class HomeController {
             model.addAttribute("staffCount", 0);
         }
         
-        model.addAttribute("totalRevenue", "2.5B VND");
+        // Tính tổng doanh thu từ hợp đồng
+        Double totalRevenue;
+        if (loggedInUser != null) {
+            totalRevenue = contractService.calculateTotalRevenueByAdminId(loggedInUser.getId());
+        } else {
+            totalRevenue = 0.0;
+        }
+        
+        // Format tổng doanh thu
+        String formattedRevenue;
+        if (totalRevenue != null && totalRevenue > 0) {
+            if (totalRevenue >= 1_000_000_000) {
+                formattedRevenue = String.format("%.1fB VND", totalRevenue / 1_000_000_000);
+            } else if (totalRevenue >= 1_000_000) {
+                formattedRevenue = String.format("%.1fM VND", totalRevenue / 1_000_000);
+            } else if (totalRevenue >= 1_000) {
+                formattedRevenue = String.format("%.1fK VND", totalRevenue / 1_000);
+            } else {
+                formattedRevenue = String.format("%.0f VND", totalRevenue);
+            }
+        } else {
+            formattedRevenue = "0 VND";
+        }
+        
+        model.addAttribute("totalRevenue", formattedRevenue);
 
-        List<Project> recentProjects = projectService.findRecentProjects(5);
+        // Lấy dự án gần đây theo adminId
+        List<Project> recentProjects;
+        if (loggedInUser != null) {
+            recentProjects = projectService.findRecentProjectsByAdminId(loggedInUser.getId(), 5);
+        } else {
+            recentProjects = List.of();
+        }
         model.addAttribute("recentProjects", recentProjects);
 
         return "home/home";

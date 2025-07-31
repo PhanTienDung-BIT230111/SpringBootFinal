@@ -27,4 +27,9 @@ public class ProjectService {
     public List<Project> findByAdminId(Long adminId) {
         return projectRepository.findByAdminId(adminId);
     }
+    
+    // ✅ Tìm N dự án gần đây nhất theo adminId
+    public List<Project> findRecentProjectsByAdminId(Long adminId, int limit) {
+        return projectRepository.findTopNByAdminIdOrderBySignedDateDesc(adminId, limit);
+    }
 }

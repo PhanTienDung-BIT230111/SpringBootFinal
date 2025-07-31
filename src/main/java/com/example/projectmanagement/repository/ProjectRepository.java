@@ -18,4 +18,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     // ✅ Custom truy vấn để lấy N dự án mới nhất
     @Query(value = "SELECT * FROM project ORDER BY signed_date DESC OFFSET 0 ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
     List<Project> findTopNByOrderBySignedDateDesc(@org.springframework.data.repository.query.Param("limit") int limit);
+    
+    // ✅ Custom truy vấn để lấy N dự án mới nhất theo adminId
+    @Query(value = "SELECT * FROM project WHERE admin_id = :adminId ORDER BY signed_date DESC OFFSET 0 ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
+    List<Project> findTopNByAdminIdOrderBySignedDateDesc(@Param("adminId") Long adminId, @Param("limit") int limit);
 }

@@ -11,4 +11,5 @@ public interface ContractService {
     List<Contract> findByAdminId(Long adminId);
     List<Contract> findByStatus(String status);
     List<Contract> searchByKeyword(String keyword);
+    Double calculateTotalRevenueByAdminId(Long adminId);
 } 
