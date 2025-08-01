@@ -72,7 +72,7 @@
     <a href="/home/projects"><i class="fas fa-briefcase"></i> Dự án</a>
     <a href="/home/staff"><i class="fas fa-users"></i> Nhân sự</a>
     <a href="/home/contracts"><i class="fas fa-file-contract"></i> Hợp đồng</a>
-    <a href="/home/reports"><i class="fas fa-chart-line"></i> Báo cáo</a>
+
     <a href="/logout" class="text-danger"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
 </div>
 
@@ -152,11 +152,11 @@
                     <div class="col-md-6">
                         <h6 class="text-primary">Quyền dự án</h6>
                         <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" th:field="*{canViewProject}">
+                            <input class="form-check-input" type="checkbox" th:field="*{canViewProject}" id="canViewProject">
                             <label class="form-check-label">Xem dự án</label>
                         </div>
                         <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" th:field="*{canEditProject}">
+                            <input class="form-check-input" type="checkbox" th:field="*{canEditProject}" id="canEditProject" onchange="handleEditProjectChange()">
                             <label class="form-check-label">Chỉnh sửa dự án</label>
                         </div>
                     </div>
@@ -164,11 +164,11 @@
                     <div class="col-md-6">
                         <h6 class="text-success">Quyền hợp đồng</h6>
                         <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" th:field="*{canViewContract}">
+                            <input class="form-check-input" type="checkbox" th:field="*{canViewContract}" id="canViewContract">
                             <label class="form-check-label">Xem hợp đồng</label>
                         </div>
                         <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" th:field="*{canEditContract}">
+                            <input class="form-check-input" type="checkbox" th:field="*{canEditContract}" id="canEditContract" onchange="handleEditContractChange()">
                             <label class="form-check-label">Chỉnh sửa hợp đồng</label>
                         </div>
                     </div>
@@ -178,11 +178,11 @@
                     <div class="col-md-6">
                         <h6 class="text-warning">Quyền nhân sự</h6>
                         <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" th:field="*{canViewStaff}">
+                            <input class="form-check-input" type="checkbox" th:field="*{canViewStaff}" id="canViewStaff">
                             <label class="form-check-label">Xem nhân sự</label>
                         </div>
                         <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" th:field="*{canEditStaff}">
+                            <input class="form-check-input" type="checkbox" th:field="*{canEditStaff}" id="canEditStaff" onchange="handleEditStaffChange()">
                             <label class="form-check-label">Chỉnh sửa nhân sự</label>
                         </div>
                     </div>
@@ -234,6 +234,39 @@
         if (sidebar && content) {
             sidebar.classList.toggle('hidden');
             content.classList.toggle('full-width');
+        }
+    }
+    
+    // Xử lý khi chọn "Chỉnh sửa dự án"
+    function handleEditProjectChange() {
+        const canEditProject = document.getElementById('canEditProject');
+        const canViewProject = document.getElementById('canViewProject');
+        
+        if (canEditProject.checked) {
+            // Nếu chọn "Chỉnh sửa dự án" thì tự động chọn "Xem dự án"
+            canViewProject.checked = true;
+        }
+    }
+    
+    // Xử lý khi chọn "Chỉnh sửa hợp đồng"
+    function handleEditContractChange() {
+        const canEditContract = document.getElementById('canEditContract');
+        const canViewContract = document.getElementById('canViewContract');
+        
+        if (canEditContract.checked) {
+            // Nếu chọn "Chỉnh sửa hợp đồng" thì tự động chọn "Xem hợp đồng"
+            canViewContract.checked = true;
+        }
+    }
+    
+    // Xử lý khi chọn "Chỉnh sửa nhân sự"
+    function handleEditStaffChange() {
+        const canEditStaff = document.getElementById('canEditStaff');
+        const canViewStaff = document.getElementById('canViewStaff');
+        
+        if (canEditStaff.checked) {
+            // Nếu chọn "Chỉnh sửa nhân sự" thì tự động chọn "Xem nhân sự"
+            canViewStaff.checked = true;
         }
     }
 </script>

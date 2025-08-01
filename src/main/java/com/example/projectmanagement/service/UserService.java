@@ -118,6 +118,15 @@ public class UserService implements UserDetailsService {
     public User getUserByTenDangNhap(String tenDangNhap) {
         return userRepository.findByTenDangNhap(tenDangNhap).orElse(null);
     }
+    
+    // Lưu user mới (không mã hóa password - dùng cho tạo tài khoản tự động)
+    public void save(User user) {
+        // Mã hóa mật khẩu trước khi lưu
+        if (user.getMatKhau() != null && !user.getMatKhau().isEmpty()) {
+            user.setMatKhau(passwordEncoder.encode(user.getMatKhau()));
+        }
+        userRepository.save(user);
+    }
 
 
     // Load User for login

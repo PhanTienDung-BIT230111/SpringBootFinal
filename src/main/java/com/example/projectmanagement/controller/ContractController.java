@@ -1,9 +1,11 @@
 package com.example.projectmanagement.controller;
 
 import com.example.projectmanagement.entity.Contract;
+import com.example.projectmanagement.entity.Staff;
 import com.example.projectmanagement.entity.User;
 import com.example.projectmanagement.service.ContractService;
 import com.example.projectmanagement.service.UserService;
+import com.example.projectmanagement.service.PermissionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -26,6 +28,9 @@ public class ContractController {
     @Autowired
     private UserService userService;
     
+    @Autowired
+    private PermissionService permissionService;
+    
     @GetMapping
     public String listContracts(Model model) {
         try {
@@ -47,10 +52,26 @@ public class ContractController {
             System.out.println("User Role: " + (loggedInUser != null ? loggedInUser.getVaiTro() : "null"));
 
             if (loggedInUser != null) {
-                // Chỉ hiển thị hợp đồng của admin đang đăng nhập
-                contractList = contractService.findByAdminId(loggedInUser.getId());
-                System.out.println("Found " + contractList.size() + " contracts for admin ID: " + loggedInUser.getId());
-                contractList.forEach(c -> System.out.println("Contract: " + c.getContractName() + " (admin_id: " + c.getAdminId() + ")"));
+                if ("ADMIN".equals(loggedInUser.getVaiTro())) {
+                    // Admin thấy hợp đồng của mình
+                    contractList = contractService.findByAdminId(loggedInUser.getId());
+                    System.out.println("Found " + contractList.size() + " contracts for admin ID: " + loggedInUser.getId());
+                } else if ("USER".equals(loggedInUser.getVaiTro())) {
+                    // User chỉ thấy hợp đồng nếu có quyền xem
+                    if (permissionService.hasPermission(loggedInUser, "canViewContract")) {
+                        Staff staff = permissionService.getStaffForUser(loggedInUser);
+                        if (staff != null) {
+                            contractList = contractService.findByAdminId(staff.getAdminId());
+                            System.out.println("Found " + contractList.size() + " contracts for staff admin ID: " + staff.getAdminId());
+                        } else {
+                            contractList = List.of();
+                        }
+                    } else {
+                        contractList = List.of();
+                    }
+                } else {
+                    contractList = List.of();
+                }
             } else {
                 // Nếu chưa đăng nhập thì redirect về login
                 System.out.println("No user logged in, redirecting to login");
@@ -74,6 +95,10 @@ public class ContractController {
             model.addAttribute("activeCount", activeCount);
             model.addAttribute("completedCount", completedCount);
             model.addAttribute("loggedInUser", loggedInUser);
+            
+            // Thêm thông tin quyền để hiển thị/ẩn nút
+            boolean canEditContract = loggedInUser != null && permissionService.hasPermission(loggedInUser, "canEditContract");
+            model.addAttribute("canEditContract", canEditContract);
             return "contracts/contractlist";
         } catch (Exception e) {
             System.out.println("=== DEBUG CONTRACT CONTROLLER ERROR ===");
@@ -87,6 +112,19 @@ public class ContractController {
     @GetMapping("/new")
     public String showAddForm(Model model) {
         System.out.println("=== DEBUG SHOW ADD CONTRACT FORM ===");
+        
+        // Kiểm tra quyền chỉnh sửa hợp đồng
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loggedInUser = null;
+        if (authentication != null && authentication.isAuthenticated() &&
+            !"anonymousUser".equals(authentication.getName())) {
+            loggedInUser = userService.getUserByTenDangNhap(authentication.getName());
+        }
+        
+        if (loggedInUser != null && !permissionService.hasPermission(loggedInUser, "canEditContract")) {
+            return "redirect:/error/access-denied?resource=contract";
+        }
+        
         model.addAttribute("contract", new Contract());
         return "contracts/contractform";
     }
@@ -128,6 +166,18 @@ public class ContractController {
     public String showEditForm(@PathVariable Long id, Model model) {
         System.out.println("=== DEBUG SHOW EDIT CONTRACT FORM ===");
         System.out.println("Contract ID: " + id);
+        
+        // Kiểm tra quyền chỉnh sửa hợp đồng
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loggedInUser = null;
+        if (authentication != null && authentication.isAuthenticated() &&
+            !"anonymousUser".equals(authentication.getName())) {
+            loggedInUser = userService.getUserByTenDangNhap(authentication.getName());
+        }
+        
+        if (loggedInUser != null && !permissionService.hasPermission(loggedInUser, "canEditContract")) {
+            return "redirect:/error/access-denied?resource=contract";
+        }
         
         Contract contract = contractService.findById(id);
         if (contract == null) {
@@ -178,6 +228,18 @@ public class ContractController {
         System.out.println("=== DEBUG DELETE CONTRACT ===");
         System.out.println("Contract ID: " + id);
         
+        // Kiểm tra quyền chỉnh sửa hợp đồng (quyền xóa = quyền chỉnh sửa)
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User loggedInUser = null;
+        if (authentication != null && authentication.isAuthenticated() &&
+            !"anonymousUser".equals(authentication.getName())) {
+            loggedInUser = userService.getUserByTenDangNhap(authentication.getName());
+        }
+        
+        if (loggedInUser != null && !permissionService.hasPermission(loggedInUser, "canEditContract")) {
+            return "redirect:/error/access-denied?resource=contract";
+        }
+        
         contractService.deleteById(id);
         System.out.println("=== END DEBUG ===");
         return "redirect:/home/contracts";
@@ -196,15 +258,26 @@ public class ContractController {
             loggedInUser = userService.getUserByTenDangNhap(authentication.getName());
         }
 
-        List<Contract> contractList;
+        List<Contract> contractList = List.of();
         if (loggedInUser != null) {
-            // Lọc theo status và adminId
-            List<Contract> allContracts = contractService.findByAdminId(loggedInUser.getId());
-            contractList = allContracts.stream()
-                    .filter(c -> status.equals(c.getStatus()))
-                    .toList();
-        } else {
-            contractList = List.of();
+            if ("ADMIN".equals(loggedInUser.getVaiTro())) {
+                // Admin lọc hợp đồng của mình
+                List<Contract> allContracts = contractService.findByAdminId(loggedInUser.getId());
+                contractList = allContracts.stream()
+                        .filter(c -> status.equals(c.getStatus()))
+                        .toList();
+            } else if ("USER".equals(loggedInUser.getVaiTro())) {
+                // User chỉ lọc hợp đồng nếu có quyền xem
+                if (permissionService.hasPermission(loggedInUser, "canViewContract")) {
+                    Staff staff = permissionService.getStaffForUser(loggedInUser);
+                    if (staff != null) {
+                        List<Contract> allContracts = contractService.findByAdminId(staff.getAdminId());
+                        contractList = allContracts.stream()
+                                .filter(c -> status.equals(c.getStatus()))
+                                .toList();
+                    }
+                }
+            }
         }
 
         // Đếm số lượng theo trạng thái
