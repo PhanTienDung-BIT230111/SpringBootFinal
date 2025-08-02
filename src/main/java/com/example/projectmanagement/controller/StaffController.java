@@ -188,11 +188,7 @@ public class StaffController {
                 System.out.println("=== END DEBUG ===");
             }
             
-            // Set thời gian tạo/cập nhật
-            if (staff.getId() == null) {
-                staff.setCreatedAt(LocalDateTime.now());
-            }
-            staff.setUpdatedAt(LocalDateTime.now());
+            // JPA Auditing sẽ tự động set thời gian tạo/cập nhật
             
             if (avatarFile != null && !avatarFile.isEmpty()) {
                 String filename = System.currentTimeMillis() + "_" + avatarFile.getOriginalFilename();
@@ -240,7 +236,7 @@ public class StaffController {
             return "redirect:/home/staff";
         }
         
-        staff.setUpdatedAt(LocalDateTime.now());
+        // JPA Auditing sẽ tự động set thời gian cập nhật
         staffService.updateStaff(staff);
         return "redirect:/home/staff";
     }

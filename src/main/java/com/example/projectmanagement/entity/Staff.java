@@ -1,10 +1,14 @@
 package com.example.projectmanagement.entity;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Staff {
 
     @Id
@@ -18,8 +22,10 @@ public class Staff {
     private String startDate;
     private String status; // Hoạt động, Nghỉ phép, Thực tập
     @Column(name = "updated_at")
+    @LastModifiedDate
     private LocalDateTime updatedAt;
     @Column(name = "created_at")
+    @CreatedDate
     private LocalDateTime createdAt;
     @Column(name = "can_edit_project")
     private Boolean canEditProject;
