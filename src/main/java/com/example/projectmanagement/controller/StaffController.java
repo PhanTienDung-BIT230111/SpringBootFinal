@@ -209,7 +209,40 @@ public class StaffController {
                 }
             }
 
+            // Lưu staff trước để có ID
             staffService.save(staff);
+            
+            // Tạo bản ghi User cho nhân sự mới
+            if (staff.getId() != null) {
+                // Kiểm tra xem email đã tồn tại chưa
+                if (!userService.existsByTenDangNhap(staff.getEmail())) {
+                    User newUser = new User();
+                    newUser.setTenDangNhap(staff.getEmail()); // Email làm tên đăng nhập
+                    newUser.setMatKhau("123"); // Mật khẩu mặc định
+                    newUser.setVaiTro("USER"); // Vai trò mặc định là USER
+                    newUser.setMaAdmin(loggedInUser.getId().toString()); // Mã admin
+                    
+                    // Sử dụng registerUser để tự động mã hóa mật khẩu và tạo mã nhân viên
+                    boolean userCreated = userService.registerUser(newUser);
+                    
+                    if (userCreated) {
+                        System.out.println("=== DEBUG USER CREATED SUCCESSFULLY ===");
+                        System.out.println("Created user for staff ID: " + staff.getId());
+                        System.out.println("User email: " + staff.getEmail());
+                        System.out.println("User maAdmin: " + newUser.getMaAdmin());
+                        System.out.println("=== END DEBUG ===");
+                    } else {
+                        System.out.println("=== DEBUG USER CREATION FAILED ===");
+                        System.out.println("Failed to create user for staff ID: " + staff.getId());
+                        System.out.println("=== END DEBUG ===");
+                    }
+                } else {
+                    System.out.println("=== DEBUG USER ALREADY EXISTS ===");
+                    System.out.println("User with email " + staff.getEmail() + " already exists");
+                    System.out.println("=== END DEBUG ===");
+                }
+            }
+            
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -55,14 +55,41 @@
         }
         
         .sidebar a:hover {
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            transform: translateX(10px);
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
         
         .sidebar a i {
+            margin-right: 12px;
             width: 20px;
-            margin-right: 10px;
+            text-align: center;
+        }
+
+        .sidebar a.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .sidebar-header {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid #e1e5e9;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h4 {
+            color: #667eea;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .sidebar-header p {
+            color: #666;
+            font-size: 12px;
+            margin: 5px 0 0 0;
         }
         
         .content {
@@ -434,9 +461,10 @@
 <body>
 
 <div class="sidebar" id="sidebar">
-    <h5 class="text-center mb-4" style="color: var(--primary-color); font-weight: 700;">
-        <i class="fas fa-cube me-2"></i>Menu
-    </h5>
+    <div class="sidebar-header">
+        <h4><i class="fas fa-project-diagram"></i> Project Manager</h4>
+        <p>Hệ thống quản lý dự án</p>
+    </div>
     <a href="/home"><i class="fas fa-home"></i> Trang chủ</a>
     <a href="/home/projects"><i class="fas fa-briefcase"></i> Dự án</a>
     <a href="/home/staff"><i class="fas fa-users"></i> Nhân sự</a>
