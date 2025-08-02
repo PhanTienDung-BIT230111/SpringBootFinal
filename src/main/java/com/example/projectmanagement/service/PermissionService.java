@@ -32,59 +32,47 @@ public class PermissionService {
         
         // Nếu là USER thì kiểm tra theo staff
         if ("USER".equals(user.getVaiTro())) {
-            String maNhanVien = user.getMaNhanVien();
             System.out.println("=== DEBUG PERMISSION SERVICE ===");
             System.out.println("User: " + user.getTenDangNhap());
             System.out.println("User Role: " + user.getVaiTro());
-            System.out.println("MaNhanVien: " + maNhanVien);
+            System.out.println("User Email: " + user.getTenDangNhap());
             
-            if (maNhanVien != null && !maNhanVien.trim().isEmpty()) {
-                try {
-                    Long staffId = Long.parseLong(maNhanVien);
-                    System.out.println("Staff ID: " + staffId);
-                    Staff staff = staffService.findById(staffId);
-                    
-                    if (staff != null) {
-                        System.out.println("Staff found: " + staff.getFullName());
-                        System.out.println("Staff adminId: " + staff.getAdminId());
-                        System.out.println("Permission requested: " + permissionType);
-                        
-                        boolean result = false;
-                        switch (permissionType) {
-                            case "canViewProject":
-                                result = staff.isCanViewProject();
-                                break;
-                            case "canEditProject":
-                                result = staff.isCanEditProject();
-                                break;
-                            case "canViewContract":
-                                result = staff.isCanViewContract();
-                                break;
-                            case "canEditContract":
-                                result = staff.isCanEditContract();
-                                break;
-                            case "canViewStaff":
-                                result = staff.isCanViewStaff();
-                                break;
-                            case "canEditStaff":
-                                result = staff.isCanEditStaff();
-                                break;
-                            default:
-                                result = false;
-                        }
-                        System.out.println("Permission result: " + result);
-                        System.out.println("=== END DEBUG ===");
-                        return result;
-                    } else {
-                        System.out.println("Staff not found for ID: " + staffId);
-                        System.out.println("=== END DEBUG ===");
-                    }
-                } catch (NumberFormatException e) {
-                    System.err.println("Invalid maNhanVien format: " + maNhanVien);
-                    System.out.println("=== END DEBUG ===");
+            // Tìm staff theo email (tenDangNhap)
+            Staff staff = staffService.findByEmail(user.getTenDangNhap());
+            
+            if (staff != null) {
+                System.out.println("Staff found: " + staff.getFullName());
+                System.out.println("Staff adminId: " + staff.getAdminId());
+                System.out.println("Permission requested: " + permissionType);
+                
+                boolean result = false;
+                switch (permissionType) {
+                    case "canViewProject":
+                        result = staff.isCanViewProject();
+                        break;
+                    case "canEditProject":
+                        result = staff.isCanEditProject();
+                        break;
+                    case "canViewContract":
+                        result = staff.isCanViewContract();
+                        break;
+                    case "canEditContract":
+                        result = staff.isCanEditContract();
+                        break;
+                    case "canViewStaff":
+                        result = staff.isCanViewStaff();
+                        break;
+                    case "canEditStaff":
+                        result = staff.isCanEditStaff();
+                        break;
+                    default:
+                        result = false;
                 }
+                System.out.println("Permission result: " + result);
+                System.out.println("=== END DEBUG ===");
+                return result;
             } else {
-                System.out.println("MaNhanVien is null or empty");
+                System.out.println("Staff not found for email: " + user.getTenDangNhap());
                 System.out.println("=== END DEBUG ===");
             }
         }
@@ -102,16 +90,7 @@ public class PermissionService {
             return null;
         }
         
-        String maNhanVien = user.getMaNhanVien();
-        if (maNhanVien != null && !maNhanVien.trim().isEmpty()) {
-            try {
-                Long staffId = Long.parseLong(maNhanVien);
-                return staffService.findById(staffId);
-            } catch (NumberFormatException e) {
-                System.err.println("Invalid maNhanVien format: " + maNhanVien);
-            }
-        }
-        
-        return null;
+        // Tìm staff theo email (tenDangNhap)
+        return staffService.findByEmail(user.getTenDangNhap());
     }
 } 

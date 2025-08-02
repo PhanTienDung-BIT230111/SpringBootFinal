@@ -15,4 +15,5 @@ public interface StaffRepository extends JpaRepository<Staff, Long> {
     List<Staff> findByPosition(String position);
     List<Staff> findByFullNameContainingIgnoreCase(String keyword);
     List<Staff> findByAdminId(Long adminId);
+    Staff findByEmail(String email);
 }

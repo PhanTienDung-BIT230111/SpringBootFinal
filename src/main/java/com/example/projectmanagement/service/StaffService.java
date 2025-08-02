@@ -10,5 +10,6 @@ public interface StaffService {
     void save(Staff staff);
     void updateStaff(Staff staff);
     Staff findById(Long id);
+    Staff findByEmail(String email);
     void deleteById(Long id);
 }

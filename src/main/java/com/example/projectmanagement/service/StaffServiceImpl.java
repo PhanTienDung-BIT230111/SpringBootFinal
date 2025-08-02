@@ -164,6 +164,11 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
+    public Staff findByEmail(String email) {
+        return staffRepository.findByEmail(email);
+    }
+
+    @Override
     public void deleteById(Long id) {
         staffRepository.deleteById(id);
     }
